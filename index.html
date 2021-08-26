@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Demineur</title>
+  <link rel="stylesheet" href="demineur.css"/>
+</head>
+<body>
+<div id="content">
+  <h1 class="vertAl">Démineur</h1>
+  <div id="selection" class="vertAl">
+  	<div id="gameSelect">
+  		<p>Choisissez une difficulté</p>
+  		<input type="button" id="easyBtn" name="Débutant" value="Débutant"/>
+  		<input type="button" id="mediumBtn" name="Intermédiaire" value="Intermédiaire"/>
+  		<input type="button" id="expertBtn" name="Expert" value="Expert"/>
+  	</div>
+    <div id="custom">
+      <p>Partie personnalisée</p>
+      <div>
+          <input type="text" id="column" name="column" placeholder='Nombre de colonnes (Entre 2 et 99)'>
+      </div>
+      <div>
+          <input type="text" id="row" name="row" placeholder='Nombre de rangées (Entre 2 et 99)'>
+      </div>
+      <div>
+          <input type="text" id="mines" name="mines" placeholder='Nombre de mines'>
+      </div>
+      <div>
+        <input type="submit" id="submit" value="Générer">
+      </div>
+    </div>
+  </div>
+  <div id="boardHeader" class="vertAl">
+    <div id="minesR"></div>
+    <div id="timer"></div>
+  </div>
+  <div id="board" class="vertAl"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="index.js"></script>
+</body>
+</html>
