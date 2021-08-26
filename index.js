@@ -1,14 +1,14 @@
 //Cette fonction permet de générer un objet permettant de gérer le chronomètre
 //Les seules méthodes publiques sont start() stop() et reset()
-function Timer(){
-  var Timer = {};
-  var timer = null;
-  var totalSeconds = 0;
-  var active = false;
+function generateTimer(){
+  let Timer = {};
+  let timer = null;
+  let totalSeconds = 0;
+  let active = false;
 
   function intToTime(number){
-    var seconds = number % 60;
-    var minutes = Math.floor(number / 60);
+    let seconds = number % 60;
+    let minutes = Math.floor(number / 60);
     return (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
   }
 
@@ -39,12 +39,12 @@ function Timer(){
   return Timer;
 }
 
-var Timer = Timer();
-var victoryCheck = false;
+let Timer = generateTimer();
+let victoryCheck = false;
 
 //Permet de mélanger un tableau --> Est utilisé pour générer les mines de façon aléatoire
 function shuffle(a) {
-  var j, x, i;
+  let j, x, i;
   for (i = a.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
     x = a[i];
@@ -56,8 +56,8 @@ function shuffle(a) {
 
 //Récupère le nombre de mines restantes depuis l'affichage visuel
 function GetMines(){
-	var txt = $('#minesR').text();
-	var minesTxt = txt.substring(18);
+	let txt = $('#minesR').text();
+	let minesTxt = txt.substring(18);
 	return +minesTxt;
 }
 //Permet de renvoyer l'id html correspondant à partir de la référence de la case dans le tableau d'objet
@@ -70,35 +70,28 @@ function ApiToId(apiRef, tableauObjet) {
 //Permet de renvoyer la référence de la case dans le tableau d'objet correspondant à partir l'id html de celle-ci
 function IdToApi(id, nbrX) {
   //Exemple d'id html : #r6c7 #r15c9 #r9c15 #r26c12 -> 4 cas différents pour 3 longueurs différentes
+  let x, y = 0;
   if (id.length === 4) {
-    var x = id.substring(3, 4);
-    var y = id.substring(1, 2);
-    x *= 1;
-    y *= 1;
+    x = Number(id.substring(3, 4));
+    y = Number(id.substring(1, 2));
   } else if (id.length === 5) {
     if (id.substring(2, 3) === "c") {
-      var x = id.substring(3, 5);
-      var y = id.substring(1, 2);
-      x *= 1;
-      y *= 1;
+      x = Number(id.substring(3, 5));
+      y = Number(id.substring(1, 2));
     } else {
-      var x = id.substring(4, 5);
-      var y = id.substring(1, 3);
-      x *= 1;
-      y *= 1;
+      x = Number(id.substring(4, 5));
+      y = Number(id.substring(1, 3));
     }
   } else {
-    var x = id.substring(4, 6);
-    var y = id.substring(1, 3);
-    x *= 1;
-    y *= 1;
+    x = Number(id.substring(4, 6));
+    y = Number(id.substring(1, 3));
   }
-  var apiRef = (y - 1) * nbrX + x - 1;
+  let apiRef = (y - 1) * nbrX + x - 1;
   return apiRef;
 }
 //Permet de calculer et de renvoyer le nombre de mines autour d'une case
 function calculMinesAutour(apiRef, tableauObjet, nbrX, nbrY) {
-  var minesAutour = 0;
+  let minesAutour = 0;
   if (tableauObjet[apiRef - 1] &&
     tableauObjet[apiRef - 1].mines &&
     apiRef % nbrX !== 0) {
@@ -147,7 +140,7 @@ function calculMinesAutour(apiRef, tableauObjet, nbrX, nbrY) {
 }
 //Permet de calculer et de renvoyer le nombre de drapeaux autour d'une case
 function calculFlagAutour(apiRef, tableauObjet, nbrX, nbrY) {
-  var flagAutour = 0;
+  let flagAutour = 0;
   if (tableauObjet[apiRef - 1] &&
     tableauObjet[apiRef - 1].status === 'flagged' &&
     apiRef % nbrX !== 0) {
@@ -199,13 +192,14 @@ function activerCase(apiRef, tableauObjet, nbrX, nbrY) {
   //Si la case à activer n'est pas un flag
   if (tableauObjet[apiRef] && tableauObjet[apiRef].status !== "flagged") {
     //On récupère son id
-    var idCase = tableauObjet[apiRef].id;
+    let idCase = tableauObjet[apiRef].id;
+    let minesAutour = 0;
     //Si la case est une mine
     if (tableauObjet[apiRef].mines) {
       Timer.stop();
       //On parcourt toutes les cases du tableau
-      for (var i = 0; i < tableauObjet.length; i++) {
-        var getId = tableauObjet[i].id;
+      for (let i = 0; i < tableauObjet.length; i++) {
+        let getId = tableauObjet[i].id;
         //Si on tombe sur une mine, on la révèle
         if (tableauObjet[i].mines) {
           if (tableauObjet[i].status !== 'flagged') {
@@ -374,27 +368,28 @@ function activerCase(apiRef, tableauObjet, nbrX, nbrY) {
       $('#' + idCase)
         .on('click', function(){
           //récupération des données
-          var thisId = $(this).attr('id');
-          var thisApiRef = IdToApi(thisId, nbrX);
+          let thisId = $(this).attr('id');
+          let thisApiRef = IdToApi(thisId, nbrX);
           //Nombre de flag autour de la case
-          var thisFlagAutour = calculFlagAutour(thisApiRef, tableauObjet, nbrX, nbrY);
+          let thisFlagAutour = calculFlagAutour(thisApiRef, tableauObjet, nbrX, nbrY);
           //Nombre de mines autour de la case
-          var thisMinesAutour = calculMinesAutour(thisApiRef, tableauObjet, nbrX, nbrY);
+          let thisMinesAutour = calculMinesAutour(thisApiRef, tableauObjet, nbrX, nbrY);
           //Si le nombre de mines et de flag autour de la case est le même
           if(thisFlagAutour === thisMinesAutour){
             //Si la case est sur le bord de gauche
+            let tableauCasesAutour = null;
             if(apiRef % nbrX === 0){
-              var tableauCasesAutour = [thisApiRef+nbrX, thisApiRef+nbrX+1, thisApiRef+1, thisApiRef-nbrX+1, thisApiRef-nbrX];
+              tableauCasesAutour = [thisApiRef+nbrX, thisApiRef+nbrX+1, thisApiRef+1, thisApiRef-nbrX+1, thisApiRef-nbrX];
             }
             //Si la case est sur le bord de droit
             else if((apiRef + 1) % nbrX === 0){
-              var tableauCasesAutour = [thisApiRef+nbrX, thisApiRef-nbrX, thisApiRef-nbrX-1, thisApiRef-1, thisApiRef+nbrX-1];
+              tableauCasesAutour = [thisApiRef+nbrX, thisApiRef-nbrX, thisApiRef-nbrX-1, thisApiRef-1, thisApiRef+nbrX-1];
             }
             else{
-              var tableauCasesAutour = [thisApiRef+nbrX, thisApiRef+nbrX+1, thisApiRef+1, thisApiRef-nbrX+1, thisApiRef-nbrX, thisApiRef-nbrX-1, thisApiRef-1, thisApiRef+nbrX-1];
+              tableauCasesAutour = [thisApiRef+nbrX, thisApiRef+nbrX+1, thisApiRef+1, thisApiRef-nbrX+1, thisApiRef-nbrX, thisApiRef-nbrX-1, thisApiRef-1, thisApiRef+nbrX-1];
             }
             //On active toutes les cases qui ne sont pas flag dans les cases autours
-            for(var i=0; i<tableauCasesAutour.length; i++){
+            for(let i=0; i<tableauCasesAutour.length; i++){
               if (tableauObjet[tableauCasesAutour[i]] &&
               tableauObjet[tableauCasesAutour[i]].status !== "flagged"){
                 activerCase(tableauCasesAutour[i], tableauObjet, nbrX, nbrY);
@@ -406,16 +401,16 @@ function activerCase(apiRef, tableauObjet, nbrX, nbrY) {
     }
     //Vérification de l'état de la partie pour savoir si le joueur a gagné
     if(!victoryCheck){
-      var minesRestantes = GetMines();
-      var victory = true;
-      for(var i=0; i<tableauObjet.length; i++){
+      let minesRestantes = GetMines();
+      let victory = true;
+      for(let i=0; i<tableauObjet.length; i++){
         if(!tableauObjet[i].mines && $('#' + ApiToId(i, tableauObjet)).data("triggered") === false){
           victory = false;
         }
       }
       if(victory){
         Timer.stop();
-        for(var i=0; i<tableauObjet.length; i++){
+        for(let i=0; i<tableauObjet.length; i++){
           if(tableauObjet[i].mines && tableauObjet[i].status !== "flagged"){
             tableauObjet[i].status = "flagged";
             minesRestantes--;
@@ -437,10 +432,10 @@ function activerCase(apiRef, tableauObjet, nbrX, nbrY) {
 }
 //Création du tableau
 function creerTableau(nbrX, nbrY, mines) {
-  var basesApi = [];
-  var minesCheck = [];
-  var k = 0;
-  var timerActif = false;
+  let basesApi = [];
+  let minesCheck = [];
+  let k = 0;
+  let timerActif = false;
   victoryCheck = false;
   //On reset le chronomètre
   Timer.reset();
@@ -448,7 +443,7 @@ function creerTableau(nbrX, nbrY, mines) {
   $('#minesR')
     .text('Mines restantes : ' + mines);
   //Création d'un tableau de la taille du nombre de case de la grille, comportant autant de 1 que de mines, le reste sera 0
-  for (var i = 0; i < nbrX * nbrY; i++) {
+  for (let i = 0; i < nbrX * nbrY; i++) {
     if (i < mines) {
       minesCheck[i] = 1;
     } else {
@@ -461,8 +456,8 @@ function creerTableau(nbrX, nbrY, mines) {
   $('#board')
     .append($('<table>'));
   //Création des rangées
-  for (var i = 0; i < nbrY; i++) {
-    var rowName = "row" + (i + 1);
+  for (let i = 0; i < nbrY; i++) {
+    let rowName = "row" + (i + 1);
     $('#board table')
       .append($('<tr>')
         .attr({
@@ -470,9 +465,9 @@ function creerTableau(nbrX, nbrY, mines) {
           'class': 'row',
         })
       );
-    for (var j = 0; j < nbrX; j++) {
+    for (let j = 0; j < nbrX; j++) {
       //Création de l'id des cases
-      var caseName = "r" + (i + 1) + "c" + (j + 1);
+      let caseName = "r" + (i + 1) + "c" + (j + 1);
       $('#board table tr:last')
         .append($('<td>')
           .attr({
@@ -515,16 +510,16 @@ function creerTableau(nbrX, nbrY, mines) {
         Timer.start();
         timerActif = true;
       }
-      var id = $(this).attr('id');
-      var apiRef = IdToApi(id, nbrX);
+      let id = $(this).attr('id');
+      let apiRef = IdToApi(id, nbrX);
       //On l'active (voir fonction activerCase() plus haut)
       activerCase(apiRef, basesApi, nbrX, nbrY);
     })
     //Si on clique droit sur une case
     .on("contextmenu", function() {
-        var id = $(this).attr('id');
-        var minesRestantes = GetMines();
-        var apiRef = IdToApi(id, nbrX);
+        let id = $(this).attr('id');
+        let minesRestantes = GetMines();
+        let apiRef = IdToApi(id, nbrX);
         //Si la case est normale
         if (basesApi[apiRef].status === 'normal') {
           //On la passe en flag
@@ -598,10 +593,9 @@ $(document).ready(function() {
 	$('#submit')
 		.on('click', function(e){
 			e.preventDefault();
-			var row = +document.getElementById("row").value;
-			var column = +document.getElementById("column").value;
-			var mines = +document.getElementById("mines").value;
-			var error = '';
+			let row = +document.getElementById("row").value;
+			let column = +document.getElementById("column").value;
+			let mines = +document.getElementById("mines").value;
 			if(row < 2 || row > 99 || isNaN(row)){
 				$("#minesR")
 					.text("Nombre de rangées invalide !");
